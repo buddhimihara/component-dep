@@ -165,7 +165,7 @@ and api_operationid=1
 
 				throw new Exception("Connection not found");
 			}
-
+/*
 			StringBuilder queryString = new StringBuilder("SELECT operatorRate.operatorRateDid, rate.code ");
 			queryString.append("FROM ");
 			queryString.append(DatabaseTables.IN_MD_RATE.getTObject()); //inmdrate
@@ -178,8 +178,27 @@ and api_operationid=1
 			queryString.append("AND operator.operatorDid = operatorRate.operatorDid ");
 			queryString.append("AND operatorRate.servicesDid = ? ");
 			queryString.append("AND operator.code = ?");
+			*/
+/*
+* 	* SELECT operationRate.operation_rateid, rate.rate_defname
+	FROM
+	rate_def rate,
+	operator op,
+	operation_rate operationRate
+	WHERE operationRate.rate_defid = rate.rate_defid
+	AND op.operatorid = operationRate.operator_id
+	AND operationRate.api_operationid = 1
+	AND op.operatorname = 'dialog'
+* */
+			StringBuilder query = new StringBuilder("SELECT operationRate.operation_rateid, rate.rate_defname ");
+			query.append("FROM ");
+			query.append("rate_def rate,operator op,operation_rate operationRate ");
+			query.append("WHERE operationRate.rate_defid = rate.rate_defid ");
+			query.append("AND op.operatorid = operationRate.operator_id ");
+			query.append("AND operationRate.api_operationid = ? ");
+			query.append("AND op.operatorname = ?");
 
-			ps = con.prepareStatement(queryString.toString());
+			ps = con.prepareStatement(query.toString());
 
 			ps.setInt(1, servicesDid);
 			ps.setString(2, operatorCode);
@@ -190,7 +209,7 @@ and api_operationid=1
 
 			while (rs.next()) {
 
-				rateDetails.put(rs.getInt("operatorRateDid"), rs.getString("code"));
+				rateDetails.put(rs.getInt("operation_rateid"), rs.getString("rate_defname"));
 			}
 		} catch (SQLException e) {
 
