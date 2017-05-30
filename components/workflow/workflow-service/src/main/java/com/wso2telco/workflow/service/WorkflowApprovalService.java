@@ -74,7 +74,7 @@ public class WorkflowApprovalService {
 					if (rateId != 0) {
 
 						//workflowApprovalRatePublisher.publishHubAPIRate(rateId, appID, apiName);
-						workflowApprovalRatePublisher.publishHubAPIRate(rateId, appID, rate);
+						workflowApprovalRatePublisher.publishHubAPIRate(rateId, appID, apiName);
 					}
 				}
 			}

@@ -80,11 +80,11 @@ public class RateCardService {
 
 	//setters
 	//public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiCode) throws Exception {
-	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String rate) throws Exception {
+	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiName) throws Exception {
 
 		try {
 
-			rateCardDAO.setHubSubscriptionRateData(servicesRateDid, applicationDid, rate);
+			rateCardDAO.setHubSubscriptionRateData(servicesRateDid, applicationDid, apiName);
 		} catch (Exception e) {
 
 			throw e;

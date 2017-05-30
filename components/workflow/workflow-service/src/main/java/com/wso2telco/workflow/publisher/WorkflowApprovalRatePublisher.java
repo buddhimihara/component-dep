@@ -11,7 +11,7 @@ public class WorkflowApprovalRatePublisher {
 	private final Log log = LogFactory.getLog(WorkflowApprovalRatePublisher.class);
 
 	//public void publishHubAPIRate(int servicesRateDid, int applicationDid, String apiCode) throws BusinessException {
-	public void publishHubAPIRate(int servicesRateDid, int applicationDid, String rate) throws BusinessException {
+	public void publishHubAPIRate(int servicesRateDid, int applicationDid, String apiName) throws BusinessException {
 
 		try {
 
@@ -20,7 +20,7 @@ public class WorkflowApprovalRatePublisher {
 			for (BillingHandlerExtension extn : loader) {
 
 				//extn.publishHubAPIRate(servicesRateDid, applicationDid, apiCode);
-				extn.publishHubAPIRate(servicesRateDid, applicationDid, rate);
+				extn.publishHubAPIRate(servicesRateDid, applicationDid, apiName);
 
 				break;
 			}
@@ -41,7 +41,7 @@ public class WorkflowApprovalRatePublisher {
 
 			for (BillingHandlerExtension extn : loader) {
 
-				extn.publishOperatorAPIRate(operatorRateDid, applicationDid, operatorId, rateDefid);
+				extn.publishOperatorAPIRate(operatorRateDid, applicationDid, operatorId, operationId);
 				break;
 			}
 		} catch (BusinessException e) {

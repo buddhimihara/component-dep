@@ -228,7 +228,7 @@ and api_operationid=1
 	}
 
 
-	//setters - TODO:change here rate. write rollback as well
+	//setters - TODO:change here rate. write rollback as well -- above methods fills the data
 	/*
 	INSERT INTO rate_db.sub_rate_nb
 	(api_operationid,applicationid,rate_defid)
@@ -236,7 +236,7 @@ and api_operationid=1
 	FROM rate_def WHERE rate_defname='SM1'))
 	*/
 	//public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiCode)
-	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String rate)
+	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiName)  // service did - 1,6,7,8,9,10,11,12 from operation_rate
 			throws SQLException, Exception {
 
 		Connection conn = null;
@@ -261,15 +261,23 @@ and api_operationid=1
 			ps.setInt(2, applicationDid);
 			ps.setString(3, apiCode);
 			*/
+
+			/*
+			* INSERT INTO rate_db.sub_rate_nb
+		(api_operationid,applicationid,rate_defid)
+	VALUES ((select api_operationid from operation_rate where operation_rateid=1),10,
+	(select rate_defid from operation_rate where operation_rateid=1))
+			* */
 			StringBuilder query = new StringBuilder("INSERT INTO rate_db.sub_rate_nb ");
 			query.append("(api_operationid,applicationid,rate_defid) ");
-			query.append("VALUES (?,?,");
-			query.append("(SELECT rate_defid FROM rate_def WHERE rate_defname=?))");
+			query.append("VALUES ((select api_operationid from operation_rate where operation_rateid=?),?,");
+			query.append("(select rate_defid from operation_rate where operation_rateid=?))");
+			//query.append("(SELECT rate_defid FROM rate_def WHERE rate_defname=?))");
 
 			ps = conn.prepareStatement(query.toString());
 			ps.setInt(1,servicesRateDid);
 			ps.setInt(2,applicationDid);
-			ps.setString(3,rate);
+			ps.setInt(3,servicesRateDid);
 
 			log.debug("sql query in setHubSubscriptionRateData : " + ps);
 
@@ -308,7 +316,7 @@ and api_operationid=1
 			query.append("VALUES (?, ?)");
 			*/
 
-			StringBuilder query = new StringBuilder("NSERT INTO sub_rate_sb ");
+			StringBuilder query = new StringBuilder("INSERT INTO sub_rate_sb ");
 			query.append("(operatorid, api_operationid, applicationid, rate_defid)");
 			query.append("VALUES (?, ?,?,?)");
 
