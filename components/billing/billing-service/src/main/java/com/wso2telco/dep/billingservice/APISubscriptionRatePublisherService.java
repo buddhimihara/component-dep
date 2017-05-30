@@ -7,11 +7,11 @@ import com.wso2telco.dep.billingservice.service.RateCardService;
 
 public class APISubscriptionRatePublisherService implements BillingHandlerExtension {
 	@Override
-	public void publishHubAPIRate(int servicesRateDid, int applicationDid, String apiName) throws BusinessException {
+	public void publishHubAPIRate(int servicesRateDid, int applicationDid) throws BusinessException {
 		try {
 
 			RateCardService rateCardService = new RateCardService();
-			rateCardService.setHubSubscriptionRateData(servicesRateDid, applicationDid, apiName);
+			rateCardService.setHubSubscriptionRateData(servicesRateDid, applicationDid);
 		} catch (Exception e) {
 
 			throw new BusinessException(ServiceError.SERVICE_ERROR_OCCURED);

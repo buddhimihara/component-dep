@@ -17,14 +17,6 @@ public class RateCardDAO {
 	/** The Constant log. */
 	private static final Log log = LogFactory.getLog(RateCardDAO.class);
 
-//TODO:change it here
-	/*
-	* select apiop.api_operationid, apiop.api_operation, apiop.api_operationcode
-	from api_operation apiop, api
-	where apiop.apiid = api.apiid
-	and api.apiname='smsmessaging'
-
-	* */
 	public Map<Integer, String> getServiceDetailsByAPICode(String apiCode) throws SQLException, Exception {
 
 		Connection con = DbUtils.getDbConnection(DataSourceNames.WSO2TELCO_RATE_DB);
@@ -39,22 +31,11 @@ public class RateCardDAO {
 				throw new Exception("Connection not found");
 			}
 
-			/*StringBuilder queryString = new StringBuilder("SELECT services.servicesDid, services.code ");
-			queryString.append("FROM ");
-			queryString.append(DatabaseTables.IN_MD_API.getTObject()); //inmdapi
-			queryString.append(" api, ");
-			queryString.append(DatabaseTables.IN_MD_SERVICES.getTObject()); //inmdservices
-			queryString.append(" services ");
-			queryString.append("WHERE api.apiDid = services.apiDid ");
-			queryString.append("AND api.code = ?");
-			*/
-
 			StringBuilder query = new StringBuilder("select apiop.api_operationid, apiop.api_operation, apiop.api_operationcode ");
 			query.append("from api_operation apiop, api ");
 			query.append("where apiop.apiid = api.apiid ");
 			query.append("and api.apiname=?");
 
-			//ps = con.prepareStatement(queryString.toString());
 			ps = con.prepareStatement(query.toString());
 
 			ps.setString(1, apiCode);
@@ -64,8 +45,6 @@ public class RateCardDAO {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-
-				//serviceDetails.put(rs.getInt("servicesDid"), rs.getString("code"));
 				serviceDetails.put(rs.getInt("api_operationid"), rs.getString("api_operation"));
 			}
 		} catch (SQLException e) {
@@ -84,14 +63,6 @@ public class RateCardDAO {
 		return serviceDetails;
 	}
 
-	//TODO:correct this -- done
-
-	/*
-	select opr.operation_rateid,rd.rate_defname
-from operation_rate opr, rate_def rd
-where opr.rate_defid=rd.rate_defid
-and api_operationid=1
-	* */
 	public Map<Integer, String> getHubRateDetailsByServicesDid(int servicesDid) throws SQLException, Exception {
 
 		Connection con = DbUtils.getDbConnection(DataSourceNames.WSO2TELCO_RATE_DB);
@@ -105,17 +76,6 @@ and api_operationid=1
 
 				throw new Exception("Connection not found");
 			}
-
-			/*
-			StringBuilder queryString = new StringBuilder("SELECT operationRate.servicesRateDid, rate.code ");
-			queryString.append("FROM ");
-			queryString.append(DatabaseTables.IN_MD_RATE.getTObject());  //inmdrate
-			queryString.append(" rate, ");
-			queryString.append(DatabaseTables.IN_OPERATION_RATE.getTObject()); //inmdoperationrate
-			queryString.append(" operationRate ");
-			queryString.append("WHERE operationRate.rateDid = rate.rateDid ");
-			queryString.append("AND operationRate.servicesDid = ?");
-			*/
 
 			StringBuilder query = new StringBuilder("select opr.operation_rateid,rd.rate_defname ");
 			query.append("from operation_rate opr, rate_def rd ");
@@ -165,31 +125,7 @@ and api_operationid=1
 
 				throw new Exception("Connection not found");
 			}
-/*
-			StringBuilder queryString = new StringBuilder("SELECT operatorRate.operatorRateDid, rate.code ");
-			queryString.append("FROM ");
-			queryString.append(DatabaseTables.IN_MD_RATE.getTObject()); //inmdrate
-			queryString.append(" rate, ");
-			queryString.append(DatabaseTables.IN_MD_OPERATOR.getTObject());
-			queryString.append(" operator, ");
-			queryString.append(DatabaseTables.IN_MD_OPERATOR_RATE.getTObject()); //inmdoperatorrate
-			queryString.append(" operatorRate ");
-			queryString.append("WHERE operatorRate.rateDid = rate.rateDid ");
-			queryString.append("AND operator.operatorDid = operatorRate.operatorDid ");
-			queryString.append("AND operatorRate.servicesDid = ? ");
-			queryString.append("AND operator.code = ?");
-			*/
-/*
-* 	* SELECT operationRate.operation_rateid, rate.rate_defname
-	FROM
-	rate_def rate,
-	operator op,
-	operation_rate operationRate
-	WHERE operationRate.rate_defid = rate.rate_defid
-	AND op.operatorid = operationRate.operator_id
-	AND operationRate.api_operationid = 1
-	AND op.operatorname = 'dialog'
-* */
+
 			StringBuilder query = new StringBuilder("SELECT operationRate.operation_rateid, rate.rate_defname ");
 			query.append("FROM ");
 			query.append("rate_def rate,operator op,operation_rate operationRate ");
@@ -228,15 +164,8 @@ and api_operationid=1
 	}
 
 
-	//setters - TODO:change here rate. write rollback as well -- above methods fills the data
-	/*
-	INSERT INTO rate_db.sub_rate_nb
-	(api_operationid,applicationid,rate_defid)
-	VALUES (9,3,(SELECT rate_defid
-	FROM rate_def WHERE rate_defname='SM1'))
-	*/
-	//public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiCode)
-	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid, String apiName)  // service did - 1,6,7,8,9,10,11,12 from operation_rate
+	//TODO:change here rate. write rollback as well
+	public void setHubSubscriptionRateData(int servicesRateDid, int applicationDid)
 			throws SQLException, Exception {
 
 		Connection conn = null;
@@ -245,29 +174,7 @@ and api_operationid=1
 		try {
 
 			conn = DbUtils.getDbConnection(DataSourceNames.WSO2TELCO_RATE_DB);
-			/*
-			StringBuilder query = new StringBuilder();
-			query.append("INSERT INTO ");
-			query.append(DatabaseTables.IN_MD_NB_SUBSCRIPTION_RATE.getTObject()); //inmdnbsubscriptionrate
-			query.append(" (servicesRateDid, applicationDid, apiDid) ");
-			query.append("VALUES (?, ?, (SELECT apiDid ");
-			query.append("FROM ");
-			query.append(DatabaseTables.IN_MD_API.getTObject()); //inmdapi
-			query.append(" WHERE code = ?))");
 
-			ps = conn.prepareStatement(query.toString());
-
-			ps.setInt(1, servicesRateDid);
-			ps.setInt(2, applicationDid);
-			ps.setString(3, apiCode);
-			*/
-
-			/*
-			* INSERT INTO rate_db.sub_rate_nb
-		(api_operationid,applicationid,rate_defid)
-	VALUES ((select api_operationid from operation_rate where operation_rateid=1),10,
-	(select rate_defid from operation_rate where operation_rateid=1))
-			* */
 			StringBuilder query = new StringBuilder("INSERT INTO rate_db.sub_rate_nb ");
 			query.append("(api_operationid,applicationid,rate_defid) ");
 			query.append("VALUES ((select api_operationid from operation_rate where operation_rateid=?),?,");
@@ -296,9 +203,6 @@ and api_operationid=1
 		}
 	}
 
-
-	//TODO:change this - get values
-	//public void setOperatorSubscriptionRateData(int operatorRateDid, int applicationDid)
 	public void setOperatorSubscriptionRateData(int operatorRateDid, int applicationDid, String operatorId, String operationId)
 			throws SQLException, Exception {
 
@@ -308,13 +212,6 @@ and api_operationid=1
 		try {
 
 			conn = DbUtils.getDbConnection(DataSourceNames.WSO2TELCO_RATE_DB);
-			/*
-			StringBuilder query = new StringBuilder();
-			query.append("INSERT INTO ");
-			query.append(DatabaseTables.IN_MD_SB_SUBSCRIPTIONS.getTObject());
-			query.append(" (operationRateDid, applicationDid) ");
-			query.append("VALUES (?, ?)");
-			*/
 
 			StringBuilder query = new StringBuilder("INSERT INTO sub_rate_sb ");
 			query.append("(operatorid, api_operationid, applicationid, rate_defid)");
